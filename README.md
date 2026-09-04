@@ -225,3 +225,17 @@ Health e metrics permanecem `@Public`.
 | `bun run test:all` | Suíte completa |
 | `bun run docker:multi` | Multi-instância Compose |
 | `bun run report:system` | Relatório de latência/atomicidade |
+
+---
+
+## Autor
+
+**Felipe Fernandes** — Systems & AI Engineer  
+
+Entrega do [Technical Challenge — Distributed Wagering Processor](https://github.com/junglegaming/backend-challenge) para a Jungle Gaming.
+
+- GitHub: [felipeofdev-ai](https://github.com/felipeofdev-ai)
+- LinkedIn: [Felipe de Oliveira Fernandes](https://www.linkedin.com/in/felipe-de-oliveira-fernandes-941763110/)
+- E-mail: [felipe.of.dev@gmail.com](mailto:felipe.of.dev@gmail.com)
+
+Disponível para a próxima etapa (entrevista técnica / walkthrough do código).
