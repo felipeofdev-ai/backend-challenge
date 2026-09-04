@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.local
+*.log
+.DS_Store
+.idea/
+.vscode/
+*.tsbuildinfo
+tmp/
+.mikro-orm/
+.turbo/
+.nest/
+docs/SYSTEM_REPORT.json
+docs/SYSTEM_REPORT.md

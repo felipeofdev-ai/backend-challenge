@@ -1,0 +1,38 @@
+{
+  "realm": "jungle-gaming",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "resetPasswordAllowed": false,
+  "editUsernameAllowed": false,
+  "clients": [
+    {
+      "clientId": "wagering-api",
+      "name": "Wagering Processor API",
+      "enabled": true,
+      "publicClient": false,
+      "secret": "wagering-api-secret",
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "protocol": "openid-connect",
+      "fullScopeAllowed": true,
+      "attributes": {
+        "access.token.lifespan": "3600"
+      },
+      "defaultClientScopes": ["web-origins", "acr", "profile", "roles", "email"],
+      "optionalClientScopes": ["address", "phone", "offline_access", "microprofile-jwt"]
+    }
+  ],
+  "users": [
+    {
+      "username": "provider-bot",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [{ "type": "password", "value": "provider-bot", "temporary": false }],
+      "realmRoles": ["default-roles-jungle-gaming"]
+    }
+  ]
+}

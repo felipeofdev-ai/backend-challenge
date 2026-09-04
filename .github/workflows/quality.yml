@@ -1,0 +1,91 @@
+name: quality
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: wagering
+          POSTGRES_PASSWORD: wagering
+          POSTGRES_DB: wagering
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U wagering -d wagering"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      localstack:
+        image: localstack/localstack:4.2
+        env:
+          SERVICES: sqs
+          DEFAULT_REGION: us-east-1
+        ports:
+          - 4566:4566
+        options: >-
+          --health-cmd "curl -f http://localhost:4566/_localstack/health"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.0"
+      - run: bun install --frozen-lockfile
+      - name: Init LocalStack queues
+        run: |
+          pip install awscli-local awscli -q || true
+          bash scripts/localstack-init.sh || true
+        env:
+          AWS_ACCESS_KEY_ID: test
+          AWS_SECRET_ACCESS_KEY: test
+          AWS_DEFAULT_REGION: us-east-1
+      - name: Typecheck
+        run: bun run typecheck
+      - name: Migrate
+        run: bun run migration:up
+        env:
+          DATABASE_PORT: "5433"
+      - name: Migration down/up sanity
+        run: |
+          bun run migration:down
+          bun run migration:up
+        env:
+          DATABASE_PORT: "5433"
+      - name: Unit + forensic
+        run: bun test tests/unit tests/forensic
+        env:
+          DATABASE_PORT: "5433"
+          REQUIRE_INFRA: "1"
+      - name: Concurrency
+        run: bun test tests/concurrency
+        env:
+          DATABASE_PORT: "5433"
+          REQUIRE_INFRA: "1"
+      - name: Concurrency harness (multi-process)
+        run: bun run test:concurrency:harness
+        env:
+          DATABASE_PORT: "5433"
+      - name: Integration SQS
+        run: bun test tests/integration
+        env:
+          DATABASE_PORT: "5433"
+          AWS_ENDPOINT_URL: http://localhost:4566
+          REQUIRE_INFRA: "1"
+      - name: Load + chaos
+        run: bun test tests/load tests/chaos
+        env:
+          DATABASE_PORT: "5433"
+          AWS_ENDPOINT_URL: http://localhost:4566
+          REQUIRE_INFRA: "1"
+      - name: Lint
+        run: bun run lint

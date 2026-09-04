@@ -1,0 +1,10 @@
+-- Schema overview (applied by Migration20260903210000)
+-- Guarantees enforced in PostgreSQL:
+--   wallets.balance >= 0
+--   UNIQUE (player_id, currency)
+--   UNIQUE (provider_id, idempotency_key)
+--   UNIQUE (provider_id, external_transaction_id)
+--   UNIQUE ledger (transaction_id) — at most one entry per tx
+--   chk_ledger_balanced — arithmetic in DB
+--   trg_ledger_immutable — no UPDATE/DELETE on ledger
+--   partial unique indexes — one effective REFUND/ROLLBACK per reference
